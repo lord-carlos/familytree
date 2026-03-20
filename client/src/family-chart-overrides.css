@@ -1,0 +1,102 @@
+.f3-form-cont:empty {
+  display: none !important;
+}
+
+.f3-close-btn {
+  color: var(--color-text) !important;
+  background: var(--color-border-light) !important;
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 24px !important;
+}
+
+.f3-close-btn:hover {
+  background: var(--color-border) !important;
+}
+
+#FamilyChart svg line,
+#FamilyChart svg path {
+  stroke: var(--color-border) !important;
+}
+
+.f3 div.card-to-add .card-inner {
+  background-color: transparent !important;
+}
+
+.f3-card-inner {
+  background: var(--color-bg-card) !important;
+  border: 1px solid var(--color-border) !important;
+  font-size: 16px !important;
+}
+
+.f3-card-inner .card-label {
+  color: var(--color-text) !important;
+}
+
+.f3-form-cont {
+  background: var(--color-bg-card) !important;
+  border: 1px solid var(--color-border) !important;
+  font-size: 16px !important;
+}
+
+.f3-form-cont input,
+.f3-form-cont textarea,
+.f3-form-cont select {
+  font-size: 18px !important;
+  padding: 10px 12px !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 6px !important;
+  background: var(--color-bg) !important;
+  color: var(--color-text) !important;
+}
+
+.f3-form-cont input:focus,
+.f3-form-cont textarea:focus,
+.f3-form-cont select:focus {
+  outline: 2px solid var(--color-primary) !important;
+  outline-offset: 1px !important;
+}
+
+.f3-form-cont button {
+  font-size: 16px !important;
+  padding: 10px 20px !important;
+  border-radius: 6px !important;
+  background: var(--color-primary) !important;
+  color: white !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+.f3-form-cont button:hover {
+  background: var(--color-primary-hover) !important;
+}
+
+.f3-form-cont label {
+  color: var(--color-text) !important;
+  font-weight: 500 !important;
+}
+
+@media (max-width: 768px) {
+  .f3-form-cont {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 85vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+    overflow-y: auto !important;
+  }
+
+  .f3-card-cont {
+    width: 140px !important;
+  }
+
+  .f3-card-inner {
+    padding: 8px !important;
+  }
+}

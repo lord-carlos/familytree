@@ -1,0 +1,17 @@
+{
+  "name": "familytree",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"bun run server\" \"bun run dev:client\"",
+    "dev:client": "cd client && bun run dev",
+    "dev:server": "bun run --watch server.ts",
+    "build": "cd client && bun run build",
+    "start": "bun run server.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "concurrently": "^9.1.2",
+    "typescript": "^5"
+  }
+}
