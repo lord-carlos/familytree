@@ -29,7 +29,7 @@ onMounted(async () => {
   if (data.length === 0) {
     data = [{
       id: '0',
-      data: { 'first name': 'Click', 'last name': 'to edit', 'birthday': '', 'avatar': '', gender: 'M' },
+      data: { 'first name': 'Click', 'last name': 'to edit', 'birthday': '', 'death date': '', 'avatar': '', gender: 'M' },
       rels: { parents: [], spouses: [], children: [] }
     }] as f3.Data
   }
@@ -45,16 +45,51 @@ onMounted(async () => {
     .setProgenyDepth(100)
 
   const f3Card = f3Chart.setCardHtml()
-    .setCardDisplay([['first name', 'last name'], ['birthday']])
+    .setCardDisplay([['first name', 'last name'], ['birthday'], ['death date']])
     .setMiniTree(true)
     .setStyle('imageCircle')
     .setOnHoverPathToMain()
 
   f3EditTree = f3Chart.editTree()
     .fixed()
-    .setFields(['first name', 'last name', 'birthday', 'avatar'])
+    .setFields(['first name', 'last name', 'birthday', 'death date', 'avatar'])
     .setEditFirst(false)
     .setCardClickOpen(f3Card)
+    .setOnFormCreation(({ cont }: { cont: HTMLElement }) => {
+      const addDatePicker = (fieldName: string) => {
+        const field = cont.querySelector(`[name="${fieldName}"]`) as HTMLInputElement
+        if (field && !field.dataset.datePickerAdded) {
+          field.dataset.datePickerAdded = 'true'
+          const wrapper = document.createElement('div')
+          wrapper.style.cssText = 'display:flex;align-items:center;gap:8px;position:relative'
+          field.parentNode?.insertBefore(wrapper, field)
+          wrapper.appendChild(field)
+
+          const dateInput = document.createElement('input')
+          dateInput.type = 'date'
+          dateInput.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0'
+          dateInput.value = field.value || ''
+          dateInput.addEventListener('change', () => {
+            field.value = dateInput.value
+            field.dispatchEvent(new Event('input', { bubbles: true }))
+          })
+          field.addEventListener('input', () => {
+            dateInput.value = field.value || ''
+          })
+          wrapper.appendChild(dateInput)
+
+          const btn = document.createElement('button')
+          btn.type = 'button'
+          btn.className = 'date-picker-btn'
+          btn.textContent = '📅'
+          btn.style.cssText = 'width:40px;height:40px;padding:0;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1'
+          btn.addEventListener('click', () => dateInput.showPicker?.() || dateInput.click())
+          wrapper.appendChild(btn)
+        }
+      }
+      addDatePicker('birthday')
+      addDatePicker('death date')
+    })
 
   ;(f3EditTree as unknown as { setOnChange: (fn: () => void) => void }).setOnChange(() => {
     const updatedData = f3EditTree?.exportData()
