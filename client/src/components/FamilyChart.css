@@ -10,8 +10,7 @@
 }
 
 .f3-avatar-display {
-  width: 100px;
-  height: 100px;
+  width: 100%;
   border-radius: 50%;
   object-fit: cover;
   margin: 8px auto;

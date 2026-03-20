@@ -23,9 +23,17 @@
   stroke: var(--color-border) !important;
 }
 
-.f3 div.card-to-add .card-inner {
-  background-color: transparent !important;
+/* todo .. something */
+.f3 div.card-new-rel .card-inner,
+.f3 div.card-new-rel .person-icon svg {
+  background-color: var(--color-bg-card) !important;
 }
+
+
+.f3 div.card-to-add .card-inner {
+  background: var(--color-bg-card) !important;
+}
+
 
 .f3-card-inner {
   background: var(--color-bg-card) !important;
