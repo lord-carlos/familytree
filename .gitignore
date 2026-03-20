@@ -1,5 +1,5 @@
 family.db
-family2.db
+uploads/
 
 # dependencies (bun install)
 node_modules

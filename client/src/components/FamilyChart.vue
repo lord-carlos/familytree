@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, createApp, h } from 'vue'
 import * as f3 from 'family-chart'
 import 'family-chart/styles/family-chart.css'
+import AvatarUpload from './AvatarUpload.vue'
 
 type ChartType = ReturnType<typeof f3.createChart>
 type EditTreeType = ReturnType<ChartType['editTree']>
@@ -50,12 +51,64 @@ onMounted(async () => {
     .setStyle('imageCircle')
     .setOnHoverPathToMain()
 
+type FormCreatorWithDatumId = { datum_id: string }
+
   f3EditTree = f3Chart.editTree()
     .fixed()
     .setFields(['first name', 'last name', 'birthday', 'death date', 'avatar'])
     .setEditFirst(false)
     .setCardClickOpen(f3Card)
-    .setOnFormCreation(({ cont }: { cont: HTMLElement }) => {
+    .setOnFormCreation(({ cont, form_creator }: { cont: HTMLElement; form_creator: FormCreatorWithDatumId }) => {
+      const form = cont.tagName === 'FORM' ? cont : cont.querySelector('form')
+      const isEditable = form ? !form.classList.contains('non-editable') : true
+      const personId = form_creator.datum_id
+      
+      const avatarField = cont.querySelector('[name="avatar"]') as HTMLInputElement
+      
+      if (isEditable && avatarField && !avatarField.dataset.avatarUploadAdded) {
+        avatarField.dataset.avatarUploadAdded = 'true'
+        const fieldParent = avatarField.closest('.f3-form-field') || avatarField.parentElement
+        if (fieldParent) {
+          (fieldParent as HTMLElement).style.display = 'none'
+          const avatarContainer = document.createElement('div')
+          avatarContainer.className = 'f3_avatar_upload'
+          avatarContainer.style.cssText = 'display:flex;justify-content:center;padding:12px 0;'
+          fieldParent.parentNode?.insertBefore(avatarContainer, fieldParent.nextSibling)
+          
+          const currentAvatar = avatarField.value || ''
+          
+          const avatarApp = createApp({
+            render: () => h(AvatarUpload, {
+              personId: personId,
+              currentAvatar: currentAvatar,
+              'onUpdate:avatar': (url: string) => {
+                avatarField.value = url
+                avatarField.dispatchEvent(new Event('input', { bubbles: true }))
+              }
+            })
+          })
+          avatarApp.mount(avatarContainer)
+        }
+      } else if (!isEditable) {
+        const allFields = cont.querySelectorAll('.f3-info-field')
+        allFields.forEach((field) => {
+          const label = field.querySelector('.f3-info-field-label')
+          if (label && label.textContent?.toLowerCase().includes('avatar')) {
+            const valueEl = field.querySelector('.f3-info-field-value') as HTMLElement | null
+            if (valueEl && !field.querySelector('.f3_avatar_display')) {
+              const avatarUrl = valueEl.textContent?.trim() || ''
+              if (avatarUrl) {
+                valueEl.style.display = 'none'
+                const img = document.createElement('img')
+                img.className = 'f3_avatar_display'
+                img.src = avatarUrl.replace('_thumb.webp', '_full.webp')
+                img.style.cssText = 'width:100px;height:100px;border-radius:50%;object-fit:cover;margin:8px auto;display:block;'
+                field.appendChild(img)
+              }
+            }
+          }
+        })
+      }
       const addDatePicker = (fieldName: string) => {
         const field = cont.querySelector(`[name="${fieldName}"]`) as HTMLInputElement
         if (field && !field.dataset.datePickerAdded) {
@@ -83,7 +136,13 @@ onMounted(async () => {
           btn.className = 'date-picker-btn'
           btn.textContent = '📅'
           btn.style.cssText = 'width:40px;height:40px;padding:0;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1'
-          btn.addEventListener('click', () => dateInput.showPicker?.() || dateInput.click())
+          btn.addEventListener('click', () => {
+            if (dateInput.showPicker) {
+              dateInput.showPicker()
+            } else {
+              dateInput.click()
+            }
+          })
           wrapper.appendChild(btn)
         }
       }

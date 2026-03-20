@@ -49,25 +49,43 @@ async function handleTreePut(req: Request): Promise<Response> {
 }
 
 async function handleImageUpload(req: Request, personId: string): Promise<Response> {
-  const formData = await req.formData();
-  const file = formData.get("avatar");
-  if (!file || !(file instanceof File)) {
-    return Response.json({ error: "No file uploaded" }, { status: 400 });
+  const formData = await req.formData()
+  const thumbnail = formData.get("thumbnail")
+  const full = formData.get("full")
+  
+  if (!thumbnail || !(thumbnail instanceof File)) {
+    return Response.json({ error: "No thumbnail uploaded" }, { status: 400 })
+  }
+  if (!full || !(full instanceof File)) {
+    return Response.json({ error: "No full image uploaded" }, { status: 400 })
   }
 
-  const ext = file.name.split(".").pop() || "jpg";
-  const filename = `${personId}.${ext}`;
-  const filepath = join(UPLOADS_DIR, filename);
+  const timestamp = Date.now()
+  const thumbFilename = `${personId}_thumb.webp`
+  const fullFilename = `${personId}_full.webp`
+  
+  const thumbPath = join(UPLOADS_DIR, thumbFilename)
+  const fullPath = join(UPLOADS_DIR, fullFilename)
 
-  const arrayBuffer = await file.arrayBuffer();
-  await Bun.write(filepath, arrayBuffer);
+  const [thumbBuffer, fullBuffer] = await Promise.all([
+    thumbnail.arrayBuffer(),
+    full.arrayBuffer()
+  ])
+  
+  await Promise.all([
+    Bun.write(thumbPath, thumbBuffer),
+    Bun.write(fullPath, fullBuffer)
+  ])
 
   db.run(
     "INSERT OR REPLACE INTO images (id, filename, mime_type) VALUES (?, ?, ?)",
-    [personId, filename, file.type]
-  );
+    [personId, thumbFilename, "image/webp"]
+  )
 
-  return Response.json({ url: `/uploads/${filename}` });
+  return Response.json({ 
+    thumbnailUrl: `/uploads/${thumbFilename}?v=${timestamp}`,
+    fullUrl: `/uploads/${fullFilename}?v=${timestamp}`
+  })
 }
 
 async function handleStaticFile(filename: string): Promise<Response> {
