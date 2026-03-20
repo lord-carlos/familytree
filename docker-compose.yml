@@ -10,6 +10,8 @@ services:
       - "traefik.http.routers.familytree.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.familytree.entrypoints=websecure"
       - "traefik.http.routers.familytree.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
+      - "traefik.http.routers.familytree.tls.domains[0].main=${TRAEFIK_BASEDOMAIN}"
+      - "traefik.http.routers.familytree.tls.domains[0].sans=*.${TRAEFIK_BASEDOMAIN}"
       - "traefik.http.services.familytree.loadbalancer.server.port=3000"
     networks:
       - traefik-net
