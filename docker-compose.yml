@@ -1,0 +1,19 @@
+services:
+  familytree:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.familytree.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.familytree.entrypoints=websecure"
+      - "traefik.http.routers.familytree.tls.certresolver=${TRAEFIK_CERTRESOLVER}"
+      - "traefik.http.services.familytree.loadbalancer.server.port=3000"
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true

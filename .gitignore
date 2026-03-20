@@ -1,4 +1,4 @@
-family.db
+data/
 uploads/
 
 # dependencies (bun install)

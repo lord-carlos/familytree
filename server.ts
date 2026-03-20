@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const UPLOADS_DIR = join(__dirname, "uploads");
-const DB_PATH = join(__dirname, "family.db");
+const DB_PATH = join(__dirname, "data", "family.db");
 const PORT = 3000;
 
 if (!existsSync(UPLOADS_DIR)) {
