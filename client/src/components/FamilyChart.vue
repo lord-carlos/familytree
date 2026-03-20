@@ -9,6 +9,7 @@ type EditTreeType = ReturnType<ChartType['editTree']>
 
 let f3Chart: ChartType | null = null
 let f3EditTree: EditTreeType | null = null
+const mountedAvatarApps: ReturnType<typeof createApp>[] = []
 
 async function fetchTree(): Promise<f3.Data> {
   const res = await fetch('/api/tree')
@@ -88,6 +89,7 @@ type FormCreatorWithDatumId = { datum_id: string }
             })
           })
           avatarApp.mount(avatarContainer)
+          mountedAvatarApps.push(avatarApp)
         }
       } else if (!isEditable) {
         const allFields = cont.querySelectorAll('.f3-info-field')
@@ -163,6 +165,8 @@ type FormCreatorWithDatumId = { datum_id: string }
 })
 
 onUnmounted(() => {
+  mountedAvatarApps.forEach(app => app.unmount())
+  mountedAvatarApps.length = 0
   f3EditTree?.destroy()
 })
 </script>
