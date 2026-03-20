@@ -8,7 +8,10 @@
   border-radius: 50% !important;
   width: 36px !important;
   height: 36px !important;
-  font-size: 24px !important;
+  font-size: 35px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .f3-close-btn:hover {
@@ -78,6 +81,15 @@
 }
 
 @media (max-width: 768px) {
+  .f3 {
+    --f3-form-height: 40vh;
+  }
+
+  .f3:has(.f3-form-cont:not(:empty)) {
+    padding-bottom: var(--f3-form-height);
+    box-sizing: border-box;
+  }
+
   .f3-form-cont {
     position: fixed !important;
     bottom: 0 !important;
@@ -86,7 +98,7 @@
     top: auto !important;
     width: 100% !important;
     max-width: 100% !important;
-    max-height: 85vh !important;
+    max-height: var(--f3-form-height) !important;
     border-radius: 16px 16px 0 0 !important;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
     overflow-y: auto !important;

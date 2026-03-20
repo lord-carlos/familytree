@@ -53,7 +53,7 @@ onMounted(async () => {
   f3EditTree = f3Chart.editTree()
     .fixed()
     .setFields(['first name', 'last name', 'birthday', 'avatar'])
-    .setEditFirst(true)
+    .setEditFirst(false)
     .setCardClickOpen(f3Card)
 
   ;(f3EditTree as unknown as { setOnChange: (fn: () => void) => void }).setOnChange(() => {
@@ -66,10 +66,6 @@ onMounted(async () => {
   f3EditTree!.setEdit()
 
   f3Chart.updateTree({ initial: true })
-
-  if (data.length > 0) {
-    f3EditTree!.open(f3Chart.getMainDatum())
-  }
 })
 
 onUnmounted(() => {
