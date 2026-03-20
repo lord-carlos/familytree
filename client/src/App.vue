@@ -8,11 +8,4 @@ import FamilyChart from './components/FamilyChart.vue'
   </main>
 </template>
 
-<style scoped>
-.app {
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-}
-</style>
+<style src="./App.css" scoped></style>

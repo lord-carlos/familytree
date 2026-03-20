@@ -12,7 +12,7 @@
 - [ ] **Error handling UI** — Show user-friendly errors when API calls fail
 - [ ] **Loading states** — Show spinner while fetching/saving tree data
 - [x] **Death date** - Add a death date to the UI.
-- [ ] **Transalte** - Translate the UI to German.
+- [ ] **Translate** - Translate the UI to German.
 
 ## Low Priority
 - [ ] **Two people editing** - make a lock so only one person can edit at the same time.

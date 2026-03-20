@@ -7,3 +7,9 @@
 **Design Principle:** Mobile-first — all UI must work well on vertical/small screens before desktop.
 
 **Build Command:** After making significant changes to the client, run `cd client && bun run build` (or `vue-tsc -b && vite build`) to verify no TypeScript errors.
+
+## CSS Architecture
+
+- **External CSS files**: Each component gets a matching `.css` file, referenced via `<style src="./ComponentName.css" scoped></style>`
+- **Structure**: `styles/variables.css` (vars), `styles/base.css` (reset), `styles/utilities.css` (shared), `styles/vendor/` (3rd party)
+- **No inline `<style>` blocks in `.vue` files**

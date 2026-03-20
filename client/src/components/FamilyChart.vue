@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, createApp, h } from 'vue'
 import * as f3 from 'family-chart'
 import 'family-chart/styles/family-chart.css'
+import './FamilyChart.css'
 import AvatarUpload from './AvatarUpload.vue'
 
 type ChartType = ReturnType<typeof f3.createChart>
@@ -70,10 +71,9 @@ type FormCreatorWithDatumId = { datum_id: string }
         avatarField.dataset.avatarUploadAdded = 'true'
         const fieldParent = avatarField.closest('.f3-form-field') || avatarField.parentElement
         if (fieldParent) {
-          (fieldParent as HTMLElement).style.display = 'none'
+          fieldParent.classList.add('hidden')
           const avatarContainer = document.createElement('div')
-          avatarContainer.className = 'f3_avatar_upload'
-          avatarContainer.style.cssText = 'display:flex;justify-content:center;padding:12px 0;'
+          avatarContainer.className = 'f3-avatar-upload'
           fieldParent.parentNode?.insertBefore(avatarContainer, fieldParent.nextSibling)
           
           const currentAvatar = avatarField.value || ''
@@ -100,11 +100,10 @@ type FormCreatorWithDatumId = { datum_id: string }
             if (valueEl && !field.querySelector('.f3_avatar_display')) {
               const avatarUrl = valueEl.textContent?.trim() || ''
               if (avatarUrl) {
-                valueEl.style.display = 'none'
+                valueEl.classList.add('hidden')
                 const img = document.createElement('img')
-                img.className = 'f3_avatar_display'
+                img.className = 'f3-avatar-display'
                 img.src = avatarUrl.replace('_thumb.webp', '_full.webp')
-                img.style.cssText = 'width:100px;height:100px;border-radius:50%;object-fit:cover;margin:8px auto;display:block;'
                 field.appendChild(img)
               }
             }
@@ -116,13 +115,13 @@ type FormCreatorWithDatumId = { datum_id: string }
         if (field && !field.dataset.datePickerAdded) {
           field.dataset.datePickerAdded = 'true'
           const wrapper = document.createElement('div')
-          wrapper.style.cssText = 'display:flex;align-items:center;gap:8px;position:relative'
+          wrapper.className = 'f3-date-wrapper'
           field.parentNode?.insertBefore(wrapper, field)
           wrapper.appendChild(field)
 
           const dateInput = document.createElement('input')
           dateInput.type = 'date'
-          dateInput.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0'
+          dateInput.className = 'f3-date-input-hidden'
           dateInput.value = field.value || ''
           dateInput.addEventListener('change', () => {
             field.value = dateInput.value
@@ -135,9 +134,8 @@ type FormCreatorWithDatumId = { datum_id: string }
 
           const btn = document.createElement('button')
           btn.type = 'button'
-          btn.className = 'date-picker-btn'
+          btn.className = 'f3-date-picker-btn'
           btn.textContent = '📅'
-          btn.style.cssText = 'width:40px;height:40px;padding:0;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1'
           btn.addEventListener('click', () => {
             if (dateInput.showPicker) {
               dateInput.showPicker()
@@ -172,5 +170,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div id="FamilyChart" class="f3" style="width:100%;height:100vh;"></div>
+  <div id="FamilyChart" class="f3"></div>
 </template>
