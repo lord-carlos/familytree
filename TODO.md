@@ -7,6 +7,7 @@
 
 ## Medium Priority
 - [ ] **Sync with server changes** — Detect when another user made changes and update the UI accordingly (polling or WebSocket)
+- [ ] **Password** - Simple login with just password. You have to set the password in the docker .env file.
 - [ ] **Delete orphaned images** — Clean up images when person is deleted (need to handle back button revert scenario)
 - [ ] **Docker containerization** — Create Dockerfile for production deployment
 - [ ] **Error handling UI** — Show user-friendly errors when API calls fail
