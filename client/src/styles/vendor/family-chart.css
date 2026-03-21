@@ -1,6 +1,6 @@
 .f3 {
-  --background-color: var(--color-bg);
-  --text-color: var(--color-text);
+  --background-color: var(--color-bg) !important;
+  --text-color: var(--color-text) !important;
 }
 
 .f3-close-btn {

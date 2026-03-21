@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, createApp, h } from 'vue'
 import * as f3 from 'family-chart'
-import 'family-chart/styles/family-chart.css'
 import './FamilyChart.css'
 import AvatarUpload from './AvatarUpload.vue'
 
