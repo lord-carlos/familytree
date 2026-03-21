@@ -1,5 +1,6 @@
-.f3-form-cont:empty {
-  display: none !important;
+.f3 {
+  --background-color: var(--color-bg);
+  --text-color: var(--color-text);
 }
 
 .f3-close-btn {
@@ -34,16 +35,6 @@
   background: var(--color-bg-card) !important;
 }
 
-
-.f3-card-inner {
-  background: var(--color-bg-card) !important;
-  border: 1px solid var(--color-border) !important;
-  font-size: 16px !important;
-}
-
-.f3-card-inner .card-label {
-  color: var(--color-text) !important;
-}
 
 .f3-form-cont {
   background: var(--color-bg-card) !important;
