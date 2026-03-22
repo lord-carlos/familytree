@@ -80,9 +80,21 @@
   background: var(--color-primary-hover) !important;
 }
 
+.f3-nav-cont {
+  background: transparent;
+  z-index: 10;
+  padding: 8px 12px;
+  max-height: 50px;
+  align-items: center;
+}
+
 .f3-form-cont label {
   color: var(--color-text) !important;
   font-weight: 500 !important;
+}
+
+.f3-form-cont:empty {
+  display: none !important;
 }
 
 @media (max-width: 768px) {

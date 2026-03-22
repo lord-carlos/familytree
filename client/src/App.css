@@ -4,3 +4,7 @@
   height: 100dvh;
   overflow: hidden;
 }
+
+.app:has(.f3-form-cont:not(:empty)) .app-header {
+  transform: translateY(-100%);
+}
