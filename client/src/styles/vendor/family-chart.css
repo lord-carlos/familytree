@@ -86,6 +86,8 @@
   padding: 8px 12px;
   max-height: 50px;
   align-items: center;
+  width: auto;
+  right: auto;
 }
 
 .f3-form-cont label {

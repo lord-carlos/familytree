@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, createApp, h } from 'vue'
+import { onMounted, onUnmounted, createApp, h, ref } from 'vue'
 import * as f3 from 'family-chart'
 import './FamilyChart.css'
 import AvatarUpload from './AvatarUpload.vue'
@@ -10,6 +10,21 @@ type EditTreeType = ReturnType<ChartType['editTree']>
 let f3Chart: ChartType | null = null
 let f3EditTree: EditTreeType | null = null
 const mountedAvatarApps: ReturnType<typeof createApp>[] = []
+
+const isVertical = ref(localStorage.getItem('orientation') !== 'horizontal')
+
+function toggleOrientation() {
+  isVertical.value = !isVertical.value
+  localStorage.setItem('orientation', isVertical.value ? 'vertical' : 'horizontal')
+  if (isVertical.value) {
+    f3Chart?.setOrientationVertical()
+  } else {
+    f3Chart?.setOrientationHorizontal()
+  }
+  f3Chart?.updateTree()
+}
+
+defineExpose({ toggleOrientation })
 
 async function fetchTree(): Promise<f3.Data> {
   const res = await fetch('/api/tree')
@@ -42,9 +57,14 @@ onMounted(async () => {
     .setCardYSpacing(150)
     .setSingleParentEmptyCard(true, { label: 'Hinzufügen' })
     .setShowSiblingsOfMain(true)
-    .setOrientationVertical()
     .setAncestryDepth(100)
     .setProgenyDepth(100)
+
+  if (isVertical.value) {
+    f3Chart.setOrientationVertical()
+  } else {
+    f3Chart.setOrientationHorizontal()
+  }
 
   const f3Card = f3Chart.setCardHtml()
     .setCardDisplay([['first name', 'last name'], ['birthday'], ['death date']])
