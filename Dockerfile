@@ -1,4 +1,6 @@
 FROM oven/bun:1 AS builder
+ARG VITE_PAGE_TITLE=Family Tree
+ENV VITE_PAGE_TITLE=$VITE_PAGE_TITLE
 WORKDIR /app
 COPY package.json bun.lock* ./
 COPY client/package.json ./client/

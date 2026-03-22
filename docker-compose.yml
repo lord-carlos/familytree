@@ -1,6 +1,9 @@
 services:
   familytree:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_PAGE_TITLE: ${VITE_PAGE_TITLE:-Family Tree}
     restart: unless-stopped
     volumes:
       - ./data:/app/data
