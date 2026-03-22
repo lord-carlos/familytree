@@ -38,7 +38,7 @@ onMounted(async () => {
 
   f3Chart = f3.createChart('#FamilyChart', data)
     .setTransitionTime(1000)
-    .setCardXSpacing(200)
+    .setCardXSpacing(160)
     .setCardYSpacing(150)
     .setSingleParentEmptyCard(true, { label: 'Hinzufügen' })
     .setShowSiblingsOfMain(true)

@@ -1,6 +1,6 @@
 .f3 {
-  --background-color: var(--color-bg) !important;
-  --text-color: var(--color-text) !important;
+  --background-color: var(--color-bg);
+  --text-color: var(--color-text);
 }
 
 .f3-close-btn {
@@ -17,6 +17,12 @@
 
 .f3-close-btn:hover {
   background: var(--color-border) !important;
+}
+
+.f3 div.card-image-circle div.card-label {
+  background-color: rgba(61, 50, 41, 0.75);
+  color: var(--color-bg);
+  backdrop-filter: blur(2px);
 }
 
 #FamilyChart svg line,
