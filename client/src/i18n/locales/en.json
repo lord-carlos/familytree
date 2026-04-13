@@ -1,0 +1,20 @@
+{
+  "fields": {
+    "first name": "First name",
+    "last name": "Last name",
+    "birthday": "Birthday",
+    "death date": "Death date",
+    "avatar": "Avatar"
+  },
+  "ui": {
+    "addPerson": "Add",
+    "click": "Click",
+    "toEdit": "to edit",
+    "uploadFailed": "Upload failed. Please try again.",
+    "changePhoto": "Change photo",
+    "cancel": "Cancel",
+    "cropAvatar": "Crop avatar",
+    "done": "Done",
+    "cropHint": "Pinch to zoom, drag to move"
+  }
+}

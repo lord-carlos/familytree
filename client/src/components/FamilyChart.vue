@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, createApp, h, ref } from 'vue'
+import { onMounted, onUnmounted, createApp, h, ref, watch } from 'vue'
 import * as f3 from 'family-chart'
 import './FamilyChart.css'
 import AvatarUpload from './AvatarUpload.vue'
+import { useI18n } from '../i18n'
 
 type ChartType = ReturnType<typeof f3.createChart>
 type EditTreeType = ReturnType<ChartType['editTree']>
+type FormCreatorWithDatumId = { datum_id: string }
 
 let f3Chart: ChartType | null = null
 let f3EditTree: EditTreeType | null = null
 const mountedAvatarApps: ReturnType<typeof createApp>[] = []
+let currentData: f3.Data = []
+
+const { t, localeRef } = useI18n()
 
 const isVertical = ref(localStorage.getItem('orientation') !== 'horizontal')
 
@@ -40,22 +45,24 @@ async function saveTree(data: f3.Data): Promise<void> {
   })
 }
 
-onMounted(async () => {
-  let data = await fetchTree()
+function getI18nFields() {
+  return [
+    { type: 'text' as const, id: 'first name', label: t('fields.first name') },
+    { type: 'text' as const, id: 'last name', label: t('fields.last name') },
+    { type: 'text' as const, id: 'birthday', label: t('fields.birthday') },
+    { type: 'text' as const, id: 'death date', label: t('fields.death date') },
+    { type: 'text' as const, id: 'avatar', label: t('fields.avatar') },
+  ]
+}
 
-  if (data.length === 0) {
-    data = [{
-      id: '0',
-      data: { 'first name': 'Click', 'last name': 'to edit', 'birthday': '', 'death date': '', 'avatar': '', gender: 'M' },
-      rels: { parents: [], spouses: [], children: [] }
-    }] as f3.Data
-  }
+function initChart(data: f3.Data) {
+  destroyChart()
 
   f3Chart = f3.createChart('#FamilyChart', data)
     .setTransitionTime(1000)
     .setCardXSpacing(160)
     .setCardYSpacing(150)
-    .setSingleParentEmptyCard(true, { label: 'Hinzufügen' })
+    .setSingleParentEmptyCard(true, { label: t('ui.addPerson') })
     .setShowSiblingsOfMain(true)
     .setAncestryDepth(100)
     .setProgenyDepth(100)
@@ -72,20 +79,18 @@ onMounted(async () => {
     .setStyle('imageCircle')
     .setOnHoverPathToMain()
 
-type FormCreatorWithDatumId = { datum_id: string }
-
   f3EditTree = f3Chart.editTree()
     .fixed()
-    .setFields(['first name', 'last name', 'birthday', 'death date', 'avatar'])
+    .setFields(getI18nFields())
     .setEditFirst(false)
     .setCardClickOpen(f3Card)
     .setOnFormCreation(({ cont, form_creator }: { cont: HTMLElement; form_creator: FormCreatorWithDatumId }) => {
       const form = cont.tagName === 'FORM' ? cont : cont.querySelector('form')
       const isEditable = form ? !form.classList.contains('non-editable') : true
       const personId = form_creator.datum_id
-      
+
       const avatarField = cont.querySelector('[name="avatar"]') as HTMLInputElement
-      
+
       if (isEditable && avatarField && !avatarField.dataset.avatarUploadAdded) {
         avatarField.dataset.avatarUploadAdded = 'true'
         const fieldParent = avatarField.closest('.f3-form-field') || avatarField.parentElement
@@ -94,9 +99,9 @@ type FormCreatorWithDatumId = { datum_id: string }
           const avatarContainer = document.createElement('div')
           avatarContainer.className = 'f3-avatar-upload'
           fieldParent.parentNode?.insertBefore(avatarContainer, fieldParent.nextSibling)
-          
+
           const currentAvatar = avatarField.value || ''
-          
+
           const avatarApp = createApp({
             render: () => h(AvatarUpload, {
               personId: personId,
@@ -113,8 +118,8 @@ type FormCreatorWithDatumId = { datum_id: string }
       } else if (!isEditable) {
         const allFields = cont.querySelectorAll('.f3-info-field')
         allFields.forEach((field) => {
-          const label = field.querySelector('.f3-info-field-label')
-          if (label && label.textContent?.toLowerCase().includes('avatar')) {
+          const inputEl = field.querySelector('input[name="avatar"]')
+          if (inputEl) {
             const valueEl = field.querySelector('.f3-info-field-value') as HTMLElement | null
             if (valueEl && !field.querySelector('.f3_avatar_display')) {
               const avatarUrl = valueEl.textContent?.trim() || ''
@@ -172,19 +177,47 @@ type FormCreatorWithDatumId = { datum_id: string }
   ;(f3EditTree as unknown as { setOnChange: (fn: () => void) => void }).setOnChange(() => {
     const updatedData = f3EditTree?.exportData()
     if (updatedData) {
-      saveTree(updatedData as f3.Data)
+      currentData = updatedData as f3.Data
+      saveTree(currentData)
     }
   })
 
   f3EditTree!.setEdit()
 
   f3Chart.updateTree({ initial: true })
-})
+}
 
-onUnmounted(() => {
+function destroyChart() {
   mountedAvatarApps.forEach(app => app.unmount())
   mountedAvatarApps.length = 0
   f3EditTree?.destroy()
+  f3EditTree = null
+  f3Chart = null
+  const container = document.querySelector('#FamilyChart')
+  if (container) container.innerHTML = ''
+}
+
+onMounted(async () => {
+  let data = await fetchTree()
+
+  if (data.length === 0) {
+    data = [{
+      id: '0',
+      data: { 'first name': t('ui.click'), 'last name': t('ui.toEdit'), 'birthday': '', 'death date': '', 'avatar': '', gender: 'M' },
+      rels: { parents: [], spouses: [], children: [] }
+    }] as f3.Data
+  }
+
+  currentData = data
+  initChart(data)
+})
+
+watch(localeRef, () => {
+  initChart(currentData)
+})
+
+onUnmounted(() => {
+  destroyChart()
 })
 </script>
 

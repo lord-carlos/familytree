@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 import { Cropper, CircleStencil } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
+import { useI18n } from '../i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   imageSrc: string
@@ -52,9 +55,9 @@ function handleCancel() {
   <div class="cropper-overlay">
     <div class="cropper-container">
       <div class="cropper-header">
-        <button class="btn-cancel" @click="handleCancel">Abbrechen</button>
-        <span class="title">Avatar zuschneiden</span>
-        <button class="btn-confirm" @click="handleConfirm">Fertig</button>
+        <button class="btn-cancel" @click="handleCancel">{{ t('ui.cancel') }}</button>
+        <span class="title">{{ t('ui.cropAvatar') }}</span>
+        <button class="btn-confirm" @click="handleConfirm">{{ t('ui.done') }}</button>
       </div>
       <div class="cropper-body">
         <Cropper
@@ -65,7 +68,7 @@ function handleCancel() {
         />
       </div>
       <div class="cropper-hint">
-        Pinch zum Zoomen, ziehen zum Verschieben
+        {{ t('ui.cropHint') }}
       </div>
     </div>
   </div>

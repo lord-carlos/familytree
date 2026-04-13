@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import AvatarCropper from './AvatarCropper.vue'
+import { useI18n } from '../i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   personId: string
@@ -68,7 +71,7 @@ async function handleCropConfirm(payload: { thumbnail: Blob; full: Blob }) {
     console.error('Upload error:', error)
     URL.revokeObjectURL(localPreviewUrl.value)
     localPreviewUrl.value = ''
-    alert('Upload fehlgeschlagen. Bitte versuche es erneut.')
+    alert(t('ui.uploadFailed'))
   } finally {
     isUploading.value = false
   }
@@ -96,7 +99,7 @@ function handleCropCancel() {
         <div class="spinner"></div>
       </div>
       <div class="avatar-overlay">
-        <span>Foto ändern</span>
+        <span>{{ t('ui.changePhoto') }}</span>
       </div>
     </div>
     <input

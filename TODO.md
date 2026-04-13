@@ -13,7 +13,7 @@
 - [ ] **Error handling UI** — Show user-friendly errors when API calls fail
 - [ ] **Loading states** — Show spinner while fetching/saving tree data
 - [x] **Death date** - Add a death date to the UI.
-- [ ] **Translate** - Translate the UI to German.
+- [x] **Translate** - Translate the UI to German.
 
 ## Low Priority
 - [ ] **Icon** - Farvicon icon needs to be something uniq

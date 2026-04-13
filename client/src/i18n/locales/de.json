@@ -1,0 +1,20 @@
+{
+  "fields": {
+    "first name": "Vorname",
+    "last name": "Nachname",
+    "birthday": "Geburtsdatum",
+    "death date": "Sterbedatum",
+    "avatar": "Profilbild"
+  },
+  "ui": {
+    "addPerson": "Hinzufügen",
+    "click": "Klicken",
+    "toEdit": "zum Bearbeiten",
+    "uploadFailed": "Upload fehlgeschlagen. Bitte versuche es erneut.",
+    "changePhoto": "Foto ändern",
+    "cancel": "Abbrechen",
+    "cropAvatar": "Avatar zuschneiden",
+    "done": "Fertig",
+    "cropHint": "Pinch zum Zoomen, ziehen zum Verschieben"
+  }
+}

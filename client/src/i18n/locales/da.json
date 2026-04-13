@@ -1,0 +1,20 @@
+{
+  "fields": {
+    "first name": "Fornavn",
+    "last name": "Efternavn",
+    "birthday": "Fødselsdag",
+    "death date": "Dødsdato",
+    "avatar": "Profilbillede"
+  },
+  "ui": {
+    "addPerson": "Tilføj",
+    "click": "Klik",
+    "toEdit": "for at redigere",
+    "uploadFailed": "Upload mislykkedes. Prøv igen.",
+    "changePhoto": "Skift billede",
+    "cancel": "Annuller",
+    "cropAvatar": "Beskær avatar",
+    "done": "Færdig",
+    "cropHint": "Klem for at zoome, træk for at flytte"
+  }
+}
