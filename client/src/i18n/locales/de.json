@@ -22,5 +22,12 @@
     "someoneEditing": "Jemand bearbeitet",
     "treeUpdated": "Stammbaum aktualisiert",
     "lockExpired": "Bearbeitungssitzung abgelaufen. Klicke auf Bearbeiten zum Fortfahren."
+  },
+  "auth": {
+    "title": "Anmelden",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "wrongPassword": "Falsches Passwort",
+    "loading": "Laden..."
   }
 }

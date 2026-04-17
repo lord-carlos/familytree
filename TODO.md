@@ -7,7 +7,7 @@
 
 ## Medium Priority
 - [x] **Sync with server changes** — SSE live updates: other clients auto-reload when someone saves
-- [ ] **Password** - Simple login with just password. You have to set the password in the docker .env file.
+- [x] **Password** - Simple login with just password. You have to set the password in the docker .env file.
 - [ ] **Delete orphaned images** — Clean up images when person is deleted (need to handle back button revert scenario)
 - [X] **Docker containerization** — Create Dockerfile for production deployment
 - [ ] **Error handling UI** — Show user-friendly errors when API calls fail

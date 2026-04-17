@@ -7,6 +7,57 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const UPLOADS_DIR = join(__dirname, "uploads");
 const DB_PATH = join(__dirname, "data", "family.db");
 const PORT = 3000;
+const SITE_PASSWORD = process.env.SITE_PASSWORD || "";
+const AUTH_ENABLED = SITE_PASSWORD.length > 0;
+
+const activeSessions = new Set<string>();
+
+function isAuthenticated(req: Request): boolean {
+  if (!AUTH_ENABLED) return true;
+  const cookieHeader = req.headers.get("cookie") || "";
+  const match = cookieHeader.match(/(?:^|;\s*)session=([^;]+)/);
+  if (!match) return false;
+  return activeSessions.has(match[1]);
+}
+
+function getSessionCookie(token: string): string {
+  return `session=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${30 * 24 * 3600}`;
+}
+
+function clearSessionCookie(): string {
+  return "session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0";
+}
+
+function handleAuthLogin(req: Request): Promise<Response> {
+  return req.json().then((body: { password?: string }) => {
+    if (!body.password || body.password !== SITE_PASSWORD) {
+      return Response.json({ error: "Wrong password" }, { status: 401 });
+    }
+    const token = crypto.randomUUID();
+    activeSessions.add(token);
+    console.log(`[AUTH] login (total sessions: ${activeSessions.size})`);
+    return new Response(JSON.stringify({ success: true }), {
+      headers: {
+        "Content-Type": "application/json",
+        "Set-Cookie": getSessionCookie(token),
+      },
+    });
+  }).catch(() => Response.json({ error: "Invalid JSON" }, { status: 400 }));
+}
+
+function handleAuthLogout(req: Request): Response {
+  const cookieHeader = req.headers.get("cookie") || "";
+  const match = cookieHeader.match(/(?:^|;\s*)session=([^;]+)/);
+  if (match) activeSessions.delete(match[1]);
+  return new Response(null, {
+    status: 204,
+    headers: { "Set-Cookie": clearSessionCookie() },
+  });
+}
+
+function handleAuthCheck(_req: Request): Response {
+  return new Response(null, { status: 200 });
+}
 
 if (!existsSync(UPLOADS_DIR)) {
   mkdirSync(UPLOADS_DIR, { recursive: true });
@@ -233,6 +284,29 @@ function serveVueBuild(req: Request): Promise<Response> | Response {
 async function handleRequest(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const pathname = url.pathname;
+
+  if (pathname === "/api/auth/login" && req.method === "POST") {
+    if (!AUTH_ENABLED) return Response.json({ success: true });
+    return handleAuthLogin(req);
+  }
+
+  if (pathname === "/api/auth/logout" && req.method === "POST") {
+    if (!AUTH_ENABLED) return new Response(null, { status: 204 });
+    return handleAuthLogout(req);
+  }
+
+  if (pathname === "/api/auth/check" && req.method === "GET") {
+    if (!AUTH_ENABLED) return new Response(null, { status: 200 });
+    return isAuthenticated(req)
+      ? new Response(null, { status: 200 })
+      : new Response(null, { status: 401 });
+  }
+
+  if (AUTH_ENABLED && !isAuthenticated(req)) {
+    if (pathname.startsWith("/api/") || pathname.startsWith("/uploads/")) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
 
   if (req.method === "GET" && pathname === "/api/tree") {
     return handleTreeGet(req);

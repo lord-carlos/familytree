@@ -5,6 +5,8 @@ services:
       args:
         VITE_PAGE_TITLE: ${VITE_PAGE_TITLE:-Family Tree}
     restart: unless-stopped
+    environment:
+      - SITE_PASSWORD=${SITE_PASSWORD}
     volumes:
       - ./data:/app/data
       - ./uploads:/app/uploads

@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { useAuth } from './useAuth'
 
 const clientId = ref<string | null>(null)
 const isConnected = ref(false)
@@ -35,9 +36,25 @@ function connect() {
   es.onerror = () => {
     console.log(`[SSE] error (readyState: ${es?.readyState})`)
     isConnected.value = false
+    if (es?.readyState === EventSource.CLOSED) {
+      const { isAuthenticated } = useAuth()
+      if (isAuthenticated.value) {
+        setTimeout(() => {
+          if (isAuthenticated.value) connect()
+        }, 3000)
+      }
+    }
   }
 }
 
+function disconnect() {
+  if (es) {
+    es.close()
+    es = null
+  }
+  isConnected.value = false
+}
+
 export function useSSE() {
-  return { clientId, isConnected, events, connect }
+  return { clientId, isConnected, events, connect, disconnect }
 }

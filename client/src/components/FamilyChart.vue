@@ -7,6 +7,7 @@ import { useI18n } from '../i18n'
 import { useSSE } from '../composables/useSSE'
 import { useEditLock } from '../composables/useEditLock'
 import { useToast } from '../composables/useToast'
+import { useAuth } from '../composables/useAuth'
 
 type ChartType = ReturnType<typeof f3.createChart>
 type EditTreeType = ReturnType<ChartType['editTree']>
@@ -21,6 +22,7 @@ const { t, localeRef } = useI18n()
 const { events, connect, clientId } = useSSE()
 const { isLockedByOther, isEditing } = useEditLock()
 const { showToast } = useToast()
+const { apiFetch } = useAuth()
 
 const isVertical = ref(localStorage.getItem('orientation') !== 'horizontal')
 
@@ -38,13 +40,13 @@ function toggleOrientation() {
 defineExpose({ toggleOrientation })
 
 async function fetchTree(): Promise<f3.Data> {
-  const res = await fetch('/api/tree')
+  const res = await apiFetch('/api/tree')
   if (!res.ok) throw new Error('Failed to fetch tree')
   return res.json()
 }
 
 async function saveTree(data: f3.Data): Promise<void> {
-  await fetch(`/api/tree?clientId=${clientId.value}`, {
+  await apiFetch(`/api/tree?clientId=${clientId.value}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),

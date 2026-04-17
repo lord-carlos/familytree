@@ -22,5 +22,12 @@
     "someoneEditing": "Nogen redigerer",
     "treeUpdated": "Slægtstræ opdateret",
     "lockExpired": "Redigering udløbet. Klik på Rediger for at fortsætte."
+  },
+  "auth": {
+    "title": "Log ind",
+    "password": "Adgangskode",
+    "submit": "Log ind",
+    "wrongPassword": "Forkert adgangskode",
+    "loading": "Indlæser..."
   }
 }

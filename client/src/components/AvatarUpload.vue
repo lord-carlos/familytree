@@ -2,8 +2,10 @@
 import { ref, computed } from 'vue'
 import AvatarCropper from './AvatarCropper.vue'
 import { useI18n } from '../i18n'
+import { useAuth } from '../composables/useAuth'
 
 const { t } = useI18n()
+const { apiFetch } = useAuth()
 
 const props = defineProps<{
   personId: string
@@ -56,7 +58,7 @@ async function handleCropConfirm(payload: { thumbnail: Blob; full: Blob }) {
     formData.append('thumbnail', payload.thumbnail, 'thumbnail.webp')
     formData.append('full', payload.full, 'full.webp')
     
-    const response = await fetch(`/api/images/${props.personId}`, {
+    const response = await apiFetch(`/api/images/${props.personId}`, {
       method: 'POST',
       body: formData,
     })

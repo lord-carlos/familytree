@@ -22,5 +22,12 @@
     "someoneEditing": "Someone is editing",
     "treeUpdated": "Tree updated",
     "lockExpired": "Your edit session expired. Click Edit to continue."
+  },
+  "auth": {
+    "title": "Sign In",
+    "password": "Password",
+    "submit": "Enter",
+    "wrongPassword": "Wrong password",
+    "loading": "Loading..."
   }
 }
