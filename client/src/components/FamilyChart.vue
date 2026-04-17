@@ -125,8 +125,9 @@ function initChart(data: f3.Data) {
         } else if (!isFieldEditable) {
           const allFields = cont.querySelectorAll('.f3-info-field')
           allFields.forEach((field) => {
-            const inputEl = field.querySelector('input[name="avatar"]')
-            if (inputEl) {
+            const labelEl = field.querySelector('.f3-info-field-label')
+            const isAvatarField = labelEl?.textContent?.trim().toLowerCase() === 'avatar'
+            if (isAvatarField) {
               const valueEl = field.querySelector('.f3-info-field-value') as HTMLElement | null
               if (valueEl && !field.querySelector('.f3_avatar_display')) {
                 const avatarUrl = valueEl.textContent?.trim() || ''
