@@ -17,6 +17,6 @@
 
 ## Low Priority
 - [ ] **Icon** - Farvicon icon needs to be something uniq
-- [ ] **Two people editing** - make a lock so only one person can edit at the same time.
+- [x] **Two people editing** - make a lock so only one person can edit at the same time.
 - [ ] **Export tree** — Export family tree as JSON or image
 - [ ] **Tree name editing** — Allow editing the tree name (stored in DB but not exposed in UI)
