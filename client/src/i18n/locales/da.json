@@ -15,6 +15,12 @@
     "cancel": "Annuller",
     "cropAvatar": "Beskær avatar",
     "done": "Færdig",
-    "cropHint": "Klem for at zoome, træk for at flytte"
+    "cropHint": "Klem for at zoome, træk for at flytte",
+    "edit": "Rediger",
+    "doneEditing": "Færdig",
+    "lockedByOther": "En anden redigerer lige nu. Prøv igen senere.",
+    "someoneEditing": "Nogen redigerer",
+    "treeUpdated": "Slægtstræ opdateret",
+    "lockExpired": "Redigering udløbet. Klik på Rediger for at fortsætte."
   }
 }

@@ -52,3 +52,30 @@
 .toggle-btn:hover {
   background: var(--color-border);
 }
+
+.btn-edit,
+.btn-done {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--color-bg);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.btn-edit {
+  background: var(--color-accent, #4a90d9);
+}
+
+.btn-edit:disabled {
+  background: var(--color-border-light);
+  color: var(--color-text);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-done {
+  background: var(--color-success, #4caf50);
+}

@@ -15,6 +15,12 @@
     "cancel": "Cancel",
     "cropAvatar": "Crop avatar",
     "done": "Done",
-    "cropHint": "Pinch to zoom, drag to move"
+    "cropHint": "Pinch to zoom, drag to move",
+    "edit": "Edit",
+    "doneEditing": "Done editing",
+    "lockedByOther": "Someone else is currently editing. Try again later.",
+    "someoneEditing": "Someone is editing",
+    "treeUpdated": "Tree updated",
+    "lockExpired": "Your edit session expired. Click Edit to continue."
   }
 }

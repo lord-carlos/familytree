@@ -31,6 +31,110 @@ db.run(`
 `);
 db.run(`INSERT OR IGNORE INTO family_tree (id, data) VALUES (1, '[]')`);
 
+interface ClientEntry {
+  id: string
+  controller: ReadableStreamDefaultController
+}
+
+interface LockState {
+  clientId: string
+  lastActivity: number
+}
+
+let clients: Map<string, ClientEntry> = new Map()
+let lock: LockState | null = null
+
+const LOCK_TIMEOUT = 15 * 60 * 1000
+
+function sendEvent(controller: ReadableStreamDefaultController, event: object) {
+  try {
+    const data = `data: ${JSON.stringify(event)}\n\n`
+    controller.enqueue(new TextEncoder().encode(data))
+  } catch { /* stream already closed */ }
+}
+
+function broadcast(event: object, exclude?: string) {
+  for (const [id, client] of clients) {
+    if (id !== exclude) {
+      sendEvent(client.controller, event)
+    }
+  }
+}
+
+function sendToClient(clientId: string, event: object) {
+  const client = clients.get(clientId)
+  if (client) sendEvent(client.controller, event)
+}
+
+setInterval(() => {
+  if (lock && Date.now() - lock.lastActivity > LOCK_TIMEOUT) {
+    const expiredClientId = lock.clientId
+    lock = null
+    console.log(`[LOCK] expired after inactivity: ${expiredClientId.slice(0,8)}`)
+    sendToClient(expiredClientId, { type: "lock_expired" })
+    broadcast({ type: "unlocked" }, expiredClientId)
+  }
+}, 30_000)
+
+function handleEvents(req: Request): Response {
+  const clientId = crypto.randomUUID()
+  const keepaliveId = setInterval(() => {
+    try {
+      controller.enqueue(new TextEncoder().encode(": keepalive\n\n"))
+    } catch { clearInterval(keepaliveId) }
+  }, 25_000)
+  let controller: ReadableStreamDefaultController
+  const stream = new ReadableStream({
+    start(ctrl) {
+      controller = ctrl
+      clients.set(clientId, { id: clientId, controller })
+      sendEvent(controller, { type: "welcome", clientId, locked: lock !== null })
+      console.log(`[SSE] client connected: ${clientId.slice(0,8)} (total: ${clients.size})`)
+    }
+  })
+
+  req.signal.addEventListener("abort", () => {
+    clearInterval(keepaliveId)
+    clients.delete(clientId)
+    const wasLockHolder = lock && lock.clientId === clientId
+    console.log(`[SSE] client disconnected: ${clientId.slice(0,8)} (was lock holder: ${wasLockHolder}, remaining: ${clients.size})`)
+    if (wasLockHolder) {
+      lock = null
+      broadcast({ type: "unlocked" })
+      console.log(`[LOCK] released via disconnect: ${clientId.slice(0,8)}`)
+    }
+  })
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive",
+    }
+  })
+}
+
+function handleLockAcquire(req: Request): Promise<Response> {
+  return req.json().then((body: { clientId: string }) => {
+    if (lock && lock.clientId !== body.clientId) {
+      console.log(`[LOCK] acquire rejected (409): ${body.clientId.slice(0,8)}, held by ${lock.clientId.slice(0,8)}`)
+      return new Response(null, { status: 409 })
+    }
+    lock = { clientId: body.clientId, lastActivity: Date.now() }
+    console.log(`[LOCK] acquired: ${body.clientId.slice(0,8)}`)
+    broadcast({ type: "locked" }, body.clientId)
+    return new Response(null, { status: 200 })
+  }).catch(() => new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 }))
+}
+
+function handleLockRelease(clientId: string): Response {
+  if (!lock || lock.clientId !== clientId) return new Response(null, { status: 404 })
+  lock = null
+  console.log(`[LOCK] released: ${clientId.slice(0,8)}`)
+  broadcast({ type: "unlocked" })
+  return new Response(null, { status: 200 })
+}
+
 async function handleTreeGet(req: Request): Promise<Response> {
   const row = db.query("SELECT data FROM family_tree WHERE id = 1").get() as { data: string } | null;
   if (!row) return Response.json({ error: "Tree not found" }, { status: 404 });
@@ -38,10 +142,20 @@ async function handleTreeGet(req: Request): Promise<Response> {
 }
 
 async function handleTreePut(req: Request): Promise<Response> {
+  const url = new URL(req.url)
+  const senderId = url.searchParams.get("clientId")
+
   try {
     const data = await req.json();
     const dataStr = JSON.stringify(data);
     db.run("UPDATE family_tree SET data = ?, updated_at = datetime('now') WHERE id = 1", [dataStr]);
+
+    if (lock && senderId && lock.clientId === senderId) {
+      lock.lastActivity = Date.now()
+    }
+
+    broadcast({ type: "tree_updated" }, senderId || undefined)
+
     return Response.json({ success: true });
   } catch (e) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
@@ -124,6 +238,20 @@ async function handleRequest(req: Request): Promise<Response> {
     return handleTreeGet(req);
   }
 
+  if (req.method === "GET" && pathname === "/api/events") {
+    return handleEvents(req);
+  }
+
+  if (req.method === "POST" && pathname === "/api/lock") {
+    return handleLockAcquire(req);
+  }
+
+  if (req.method === "DELETE" && pathname === "/api/lock") {
+    const clientId = url.searchParams.get("clientId")
+    if (!clientId) return Response.json({ error: "Missing clientId" }, { status: 400 })
+    return handleLockRelease(clientId);
+  }
+
   if (req.method === "PUT" && pathname === "/api/tree") {
     return handleTreePut(req);
   }
@@ -146,4 +274,4 @@ async function handleRequest(req: Request): Promise<Response> {
 }
 
 console.log(`Server running on http://localhost:${PORT}`);
-Bun.serve({ port: PORT, hostname: "0.0.0.0", fetch: handleRequest });
+Bun.serve({ port: PORT, hostname: "0.0.0.0", fetch: handleRequest, idleTimeout: 255 });

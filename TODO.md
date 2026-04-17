@@ -6,7 +6,7 @@
 - [x] **Mobile-friendly date picker** — Birthday field needs a touch-friendly date selector
 
 ## Medium Priority
-- [ ] **Sync with server changes** — Detect when another user made changes and update the UI accordingly (polling or WebSocket)
+- [x] **Sync with server changes** — SSE live updates: other clients auto-reload when someone saves
 - [ ] **Password** - Simple login with just password. You have to set the password in the docker .env file.
 - [ ] **Delete orphaned images** — Clean up images when person is deleted (need to handle back button revert scenario)
 - [X] **Docker containerization** — Create Dockerfile for production deployment

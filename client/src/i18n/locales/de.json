@@ -15,6 +15,12 @@
     "cancel": "Abbrechen",
     "cropAvatar": "Avatar zuschneiden",
     "done": "Fertig",
-    "cropHint": "Pinch zum Zoomen, ziehen zum Verschieben"
+    "cropHint": "Pinch zum Zoomen, ziehen zum Verschieben",
+    "edit": "Bearbeiten",
+    "doneEditing": "Fertig",
+    "lockedByOther": "Jemand anderes bearbeitet gerade. Versuche es später erneut.",
+    "someoneEditing": "Jemand bearbeitet",
+    "treeUpdated": "Stammbaum aktualisiert",
+    "lockExpired": "Bearbeitungssitzung abgelaufen. Klicke auf Bearbeiten zum Fortfahren."
   }
 }
